@@ -1,5 +1,4 @@
 #include "include/rgb.h"
-#include <stdint.h>
 
 RGB RGB_from_uint32_t(uint32_t color) {
   RGB colors;

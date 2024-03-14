@@ -1,7 +1,18 @@
 #include "include/rgb-pallete.h"
-#include "include/rgb.h"
 
-SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *renderer, uint32_t *buffer) {
+RGBPallete RGBPallete_CreatePallete() {
+  ColorBuffer buffer;
+  RGBPallete pallete = {0xFFFF0000, 0xFFFF0000, 15};
+  
+  buffer.buffer = (uint32_t*) malloc(255 * 255 * sizeof(uint32_t));
+  buffer.size = 255 * 255;
+
+  pallete.buffer = buffer;
+
+  return pallete;
+}
+
+SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *renderer) {
   SDL_Texture *texture = pallete->texture;
 
   if (texture == NULL) {
@@ -24,6 +35,8 @@ SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *rend
   ur = width - 1;
   bl = height * (height - 1);
   br = bl + ur;
+
+  uint32_t *buffer = pallete->buffer.buffer;
   
   buffer[ul] = 0xFFFFFFFF;
   buffer[ur] = pallete->base;
@@ -113,7 +126,13 @@ void RGBPallete_Increment(RGBPallete *pallete) {
   pallete->base = RGB_to_uint32_t(&rgb);
 }
 
+RGB RGBPallete_At(RGBPallete *pallete, int x, int y) {
+  uint32_t color = pallete->buffer.buffer[y * 255 + x];
+  return RGB_from_uint32_t(color);
+}
+
 void RGBPallete_Destroy(RGBPallete *pallete) {
+  free(pallete->buffer.buffer);
   SDL_DestroyTexture(pallete->texture);
 }
 

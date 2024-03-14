@@ -1,9 +1,8 @@
 #include "include/loop.h"
-#include "include/rgb.h"
 
 LoopState Loop_Setup() {
   Window window = Window_Create();
-  RGBPallete pallete = {0xFFFF0000, 0xFFFF0000, 15};
+  RGBPallete pallete = RGBPallete_CreatePallete();  
   return (LoopState){window, pallete, window.initalized};
 }
 
@@ -30,11 +29,10 @@ void Loop_ProcessInput(LoopState *state) {
 }
 
 void Loop_Render(LoopState *state) {
-  uint32_t *buffer = state->window.colorBuffer.buffer;
   SDL_Renderer *renderer = state->window.renderer;
-  SDL_Texture *texture = RGBPallete_CreateSDLTexture(&state->pallete, renderer, buffer);
+  SDL_Texture *texture = RGBPallete_CreateSDLTexture(&state->pallete, renderer);
 
-  SDL_UpdateTexture(texture, NULL, buffer, 255 * (sizeof(uint32_t)));
+  SDL_UpdateTexture(texture, NULL, state->pallete.buffer.buffer, 255 * (sizeof(uint32_t)));
   
   SDL_RenderClear(renderer);
   SDL_RenderCopy(renderer, texture, NULL, NULL);
@@ -73,7 +71,12 @@ void processKeyDownEvent(SDL_KeyboardEvent *event, LoopState* state) {
 }
 
 void processMouseButtonUpEvent(SDL_MouseButtonEvent *event, LoopState* state) {
-  RGB color = RGB_from_uint32_t(Window_GetColorAt(&state->window, event->x, event->y));
+  int x, y;
+  
+  x = (((double) event->x / (double) state->window.width)) * 255;
+  y = (((double) event->y / (double) state->window.height)) * 255;
+
+  RGB color = RGBPallete_At(&state->pallete, x, y);
   switch (event->button) {
     case SDL_BUTTON_LEFT:
       printf("RGB: [%d, %d, %d]\n", color.r, color.g, color.b);
