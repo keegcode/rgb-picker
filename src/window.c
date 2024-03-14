@@ -19,7 +19,7 @@ Window Window_Create() {
     SDL_WINDOWPOS_CENTERED, 
     w, 
     h, 
-    SDL_WINDOW_RESIZABLE 
+    SDL_WINDOW_BORDERLESS 
   );
   if (!window) {
     fprintf(stderr, "Error initializing SDL2 window");
