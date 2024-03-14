@@ -1,6 +1,6 @@
 #include "include/window.h"
 
-Window createWindow() {
+Window Window_Create() {
   ColorBuffer buffer = {NULL, 0};
   Window result = {false, 0, 0, buffer, NULL, NULL};
   
@@ -44,7 +44,7 @@ Window createWindow() {
   return result;
 }
 
-void destroyWindow(Window *window) {
+void Window_Destroy(Window *window) {
   free(window->colorBuffer.buffer);
   
   SDL_DestroyRenderer(window->renderer);

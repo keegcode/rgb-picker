@@ -1,13 +1,18 @@
 #include "include/rgb-pallete.h"
+#include <SDL2/SDL_render.h>
 
 SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *renderer, uint32_t *buffer) {
-  SDL_Texture *texture = SDL_CreateTexture(
-    renderer, 
-    SDL_PIXELFORMAT_ARGB8888, 
-    SDL_TEXTUREACCESS_STREAMING, 
-    255, 
-    255 
-  );
+  SDL_Texture *texture = pallete->texture;
+
+  if (texture == NULL) {
+    texture = SDL_CreateTexture(
+      renderer, 
+      SDL_PIXELFORMAT_ARGB8888, 
+      SDL_TEXTUREACCESS_STREAMING, 
+      255, 
+      255 
+    );
+  } 
   
   int height, width;
   int ul, ur, bl, br;
@@ -42,8 +47,10 @@ SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *rend
       buffer[i] = lerpRGB(buffer[l], buffer[r], t);
     }
   }
+
+  pallete->texture = texture;
   
-  return texture;
+  return pallete->texture;
 }
 
 void RGBPallete_Decrement(RGBPallete *pallete) {
@@ -114,6 +121,10 @@ void RGBPallete_Increment(RGBPallete *pallete) {
   }
   
   pallete->base = 0xFF000000 | (r << 16) | (g << 8) | b;
+}
+
+void RGBPallete_Destroy(RGBPallete *pallete) {
+  SDL_DestroyTexture(pallete->texture);
 }
 
 uint32_t lerpRGB(uint32_t color1, uint32_t color2, double t) {

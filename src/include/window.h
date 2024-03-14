@@ -18,5 +18,5 @@ typedef struct {
   SDL_Renderer *renderer;
 } Window; 
 
-Window createWindow();
-void destroyWindow(Window *window);
+Window Window_Create();
+void Window_Destroy(Window *window);

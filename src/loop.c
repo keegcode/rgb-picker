@@ -2,7 +2,7 @@
 #include "include/rgb-pallete.h"
 
 LoopState Loop_Setup() {
-  Window window = createWindow();
+  Window window = Window_Create();
   RGBPallete pallete = {0xFFFF0000, 0xFFFF0000, 15};
   return (LoopState){window, pallete, window.initalized};
 }
@@ -39,7 +39,8 @@ void Loop_Render(LoopState *state) {
 }
 
 void Loop_Destroy(LoopState *state) {
-  destroyWindow(&state->window);
+  RGBPallete_Destroy(&state->pallete);
+  Window_Destroy(&state->window);
 }
 
 void processWindowEvent(SDL_WindowEvent event, LoopState* state) {
