@@ -1,5 +1,5 @@
 #include "include/rgb-pallete.h"
-#include <SDL2/SDL_render.h>
+#include "include/rgb.h"
 
 SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *renderer, uint32_t *buffer) {
   SDL_Texture *texture = pallete->texture;
@@ -34,8 +34,8 @@ SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *rend
     double t = i / (double)(height - 1);
     int l = i * height + ul; 
     int r = i * height + ur; 
-    buffer[l] = lerpRGB(buffer[ul], buffer[bl], t);
-    buffer[r] = lerpRGB(buffer[ur], buffer[br], t);
+    buffer[l] = RGB_uint32_t_Lerp(buffer[ul], buffer[bl], t);
+    buffer[r] = RGB_uint32_t_Lerp(buffer[ur], buffer[br], t);
   }
   
   for (int y = 0; y < height; y++) {
@@ -44,7 +44,7 @@ SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *rend
     for (int x = 0; x < width; x++) {
       int i = y * height + x;
       double t = x / (double)ur;
-      buffer[i] = lerpRGB(buffer[l], buffer[r], t);
+      buffer[i] = RGB_uint32_t_Lerp(buffer[l], buffer[r], t);
     }
   }
 
@@ -54,91 +54,66 @@ SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *rend
 }
 
 void RGBPallete_Decrement(RGBPallete *pallete) {
-  uint32_t color = pallete->base;
-  char step = pallete->step;
+  RGB rgb = RGB_from_uint32_t(pallete->base);
 
-  unsigned char r = (color >> 16) & 0xFF;
-  unsigned char g = (color >> 8) & 0xFF;
-  unsigned char b = color & 0xFF;
-
-  if (r == 255 && b == 0) {
-    g += step;
+  if (rgb.r == 255 && rgb.b == 0) {
+    rgb.g += pallete->step;
   }
   
-  if (r == 255 && b > 0) {
-    b -= step;
+  if (rgb.r == 255 && rgb.b > 0) {
+    rgb.b -= pallete->step;
   }
 
-  if (g == 255 && r > 0) {
-    r -= step;
+  if (rgb.g == 255 && rgb.r > 0) {
+    rgb.r -= pallete->step;
   }
 
-  if (g == 255 && r == 0) {
-    b += step;
+  if (rgb.g == 255 && rgb.r == 0) {
+    rgb.b += pallete->step;
   }
   
-  if (b == 255 && g > 0) {
-    g -= step;
+  if (rgb.b == 255 && rgb.g > 0) {
+    rgb.g -= pallete->step;
   }
   
-  if (b == 255 && g == 0) {
-    r += step;
+  if (rgb.b == 255 && rgb.g == 0) {
+    rgb.r += pallete->step;
   }
   
-  pallete->base = 0xFF000000 | (r << 16) | (g << 8) | b;
+  pallete->base = RGB_to_uint32_t(&rgb);
 }
 
 void RGBPallete_Increment(RGBPallete *pallete) {
-  uint32_t color = pallete->base;
-  char step = pallete->step;
+  RGB rgb = RGB_from_uint32_t(pallete->base);
 
-  unsigned char r = (color >> 16) & 0xFF;
-  unsigned char g = (color >> 8) & 0xFF;
-  unsigned char b = color & 0xFF;
-
-  if (r == 255 && g == 0) {
-    b += step;
+  if (rgb.r == 255 && rgb.g == 0) {
+    rgb.b += pallete->step;
   }
   
-  if (r == 255 && g > 0) {
-    g -= step;
+  if (rgb.r == 255 && rgb.g > 0) {
+    rgb.g -= pallete->step;
   }
 
-  if (g == 255 && b > 0) {
-    b -= step;
+  if (rgb.g == 255 && rgb.b > 0) {
+    rgb.b -= pallete->step;
   }
 
-  if (g == 255 && b == 0) {
-    r += step;
+  if (rgb.g == 255 && rgb.b == 0) {
+    rgb.r += pallete->step;
   }
   
-  if (b == 255 && r > 0) {
-    r -= step;
+  if (rgb.b == 255 && rgb.r > 0) {
+    rgb.r -= pallete->step;
   }
   
-  if (b == 255 && r == 0) {
-    g += step;
+  if (rgb.b == 255 && rgb.r == 0) {
+    rgb.g += pallete->step;
   }
   
-  pallete->base = 0xFF000000 | (r << 16) | (g << 8) | b;
+  pallete->base = RGB_to_uint32_t(&rgb);
 }
 
 void RGBPallete_Destroy(RGBPallete *pallete) {
   SDL_DestroyTexture(pallete->texture);
 }
 
-uint32_t lerpRGB(uint32_t color1, uint32_t color2, double t) {
-  unsigned char r1 = (color1 >> 16) & 0xFF;
-  unsigned char g1 = (color1 >> 8) & 0xFF;
-  unsigned char b1 = color1 & 0xFF;
-
-  unsigned char r2 = (color2 >> 16) & 0xFF;
-  unsigned char g2 = (color2 >> 8) & 0xFF;
-  unsigned char b2 = color2 & 0xFF;
-
-  unsigned char r = (unsigned char)(r1 + (r2 - r1) * t);
-  unsigned char g = (unsigned char)(g1 + (g2 - g1) * t);
-  unsigned char b = (unsigned char)(b1 + (b2 - b1) * t);
-
-  return 0xFF000000 | (r << 16) | (g << 8) | b;
-}

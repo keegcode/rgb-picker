@@ -13,9 +13,10 @@ LoopState Loop_Setup();
 
 void Loop_ProcessInput(LoopState *state);
 
-void processWindowEvent(SDL_WindowEvent event, LoopState *state);
-void processKeyDownEvent(SDL_KeyboardEvent event, LoopState *state);
-
 void Loop_Render(LoopState* state);
 
 void Loop_Destroy(LoopState* state);
+
+void processWindowEvent(SDL_WindowEvent *event, LoopState *state);
+void processKeyDownEvent(SDL_KeyboardEvent *event, LoopState *state);
+void processMouseButtonUpEvent(SDL_MouseButtonEvent *event, LoopState *state);

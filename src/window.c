@@ -44,6 +44,10 @@ Window Window_Create() {
   return result;
 }
 
+uint32_t Window_GetColorAt(Window *window, int x, int y) {
+  return window->colorBuffer.buffer[y * window->height + x]; 
+}
+
 void Window_Destroy(Window *window) {
   free(window->colorBuffer.buffer);
   

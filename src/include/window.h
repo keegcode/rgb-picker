@@ -19,4 +19,5 @@ typedef struct {
 } Window; 
 
 Window Window_Create();
+uint32_t Window_GetColorAt(Window *window, int x, int y);
 void Window_Destroy(Window *window);

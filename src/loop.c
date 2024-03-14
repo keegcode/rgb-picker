@@ -1,5 +1,5 @@
 #include "include/loop.h"
-#include "include/rgb-pallete.h"
+#include "include/rgb.h"
 
 LoopState Loop_Setup() {
   Window window = Window_Create();
@@ -15,10 +15,13 @@ void Loop_ProcessInput(LoopState *state) {
           state->isRunning = false;
           break;
         case SDL_WINDOWEVENT:
-          processWindowEvent(event.window, state);
+          processWindowEvent(&event.window, state);
           break;
         case SDL_KEYDOWN:
-          processKeyDownEvent(event.key, state);
+          processKeyDownEvent(&event.key, state);
+          break;
+        case SDL_MOUSEBUTTONUP: 
+          processMouseButtonUpEvent(&event.button, state);
           break;
         default:
           break;
@@ -43,8 +46,8 @@ void Loop_Destroy(LoopState *state) {
   Window_Destroy(&state->window);
 }
 
-void processWindowEvent(SDL_WindowEvent event, LoopState* state) {
-  switch (event.event) {
+void processWindowEvent(SDL_WindowEvent *event, LoopState* state) {
+  switch (event->event) {
     case SDL_WINDOWEVENT_CLOSE:
       state->isRunning = false;
       break;
@@ -53,8 +56,8 @@ void processWindowEvent(SDL_WindowEvent event, LoopState* state) {
   }
 }
 
-void processKeyDownEvent(SDL_KeyboardEvent event, LoopState* state) {
-  switch (event.keysym.sym) {
+void processKeyDownEvent(SDL_KeyboardEvent *event, LoopState* state) {
+  switch (event->keysym.sym) {
     case SDLK_ESCAPE:
       state->isRunning = false;
       break;
@@ -63,6 +66,17 @@ void processKeyDownEvent(SDL_KeyboardEvent event, LoopState* state) {
       break;
     case SDLK_UP:
       RGBPallete_Increment(&state->pallete);
+      break;
+    default:
+      break;
+  }
+}
+
+void processMouseButtonUpEvent(SDL_MouseButtonEvent *event, LoopState* state) {
+  RGB color = RGB_from_uint32_t(Window_GetColorAt(&state->window, event->x, event->y));
+  switch (event->button) {
+    case SDL_BUTTON_LEFT:
+      printf("RGB: [%d, %d, %d]\n", color.r, color.g, color.b);
       break;
     default:
       break;
