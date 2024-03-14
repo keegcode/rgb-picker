@@ -1,5 +1,5 @@
-#include "loop.h"
-#include "rgb-pallete.h"
+#include "include/loop.h"
+#include "include/rgb-pallete.h"
 
 LoopState Loop_Setup() {
   Window window = createWindow();

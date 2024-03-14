@@ -1,4 +1,4 @@
-#include "rgb-pallete.h"
+#include "include/rgb-pallete.h"
 
 SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *renderer, uint32_t *buffer) {
   SDL_Texture *texture = SDL_CreateTexture(
