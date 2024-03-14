@@ -1,8 +1,9 @@
 #include "loop.h"
+#include "rgb-pallete.h"
 
 LoopState Loop_Setup() {
   Window window = createWindow();
-  RGBPallete pallete = {0xFFFF0000, 0xFFFF0000};
+  RGBPallete pallete = {0xFFFF0000, 0xFFFF0000, 15};
   return (LoopState){window, pallete, window.initalized};
 }
 
@@ -57,10 +58,10 @@ void processKeyDownEvent(SDL_KeyboardEvent event, LoopState* state) {
       state->isRunning = false;
       break;
     case SDLK_DOWN:
-      state->pallete.base -= (state->pallete.base > 0);
+      RGBPallete_Decrement(&state->pallete);
       break;
     case SDLK_UP:
-      state->pallete.base = (state->pallete.base + 1) % 255;
+      RGBPallete_Increment(&state->pallete);
       break;
     default:
       break;
