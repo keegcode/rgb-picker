@@ -1,12 +1,12 @@
 #include "include/loop.h"
 
-LoopState Loop_Setup() {
-  Window window = Window_Create();
-  RGBPallete pallete = RGBPallete_CreatePallete();  
+LoopState LoopSetup() {
+  Window window = WindowCreate();
+  RGBPallete pallete = RGBPalleteCreate();  
   return (LoopState){window, pallete, window.initalized};
 }
 
-void Loop_ProcessInput(LoopState *state) {
+void LoopProcessInput(LoopState *state) {
     SDL_Event event;
     while(SDL_PollEvent(&event)) {
       switch (event.type) {
@@ -28,9 +28,9 @@ void Loop_ProcessInput(LoopState *state) {
     }
 }
 
-void Loop_Render(LoopState *state) {
+void LoopRender(LoopState *state) {
   SDL_Renderer *renderer = state->window.renderer;
-  SDL_Texture *texture = RGBPallete_CreateSDLTexture(&state->pallete, renderer);
+  SDL_Texture *texture = RGBPalleteCreateSDLTexture(&state->pallete, renderer);
 
   SDL_UpdateTexture(texture, NULL, state->pallete.buffer.buffer, 255 * (sizeof(uint32_t)));
   
@@ -39,12 +39,12 @@ void Loop_Render(LoopState *state) {
   SDL_RenderPresent(renderer);
 }
 
-void Loop_Destroy(LoopState *state) {
-  RGBPallete_Destroy(&state->pallete);
-  Window_Destroy(&state->window);
+void LoopDestroy(LoopState *state) {
+  RGBPalleteDestroy(&state->pallete);
+  WindowDestroy(&state->window);
 }
 
-void processWindowEvent(SDL_WindowEvent *event, LoopState* state) {
+void processWindowEvent(SDL_WindowEvent *event, LoopState *state) {
   switch (event->event) {
     case SDL_WINDOWEVENT_CLOSE:
       state->isRunning = false;
@@ -54,16 +54,16 @@ void processWindowEvent(SDL_WindowEvent *event, LoopState* state) {
   }
 }
 
-void processKeyDownEvent(SDL_KeyboardEvent *event, LoopState* state) {
+void processKeyDownEvent(SDL_KeyboardEvent *event, LoopState *state) {
   switch (event->keysym.sym) {
     case SDLK_ESCAPE:
       state->isRunning = false;
       break;
     case SDLK_DOWN:
-      RGBPallete_Decrement(&state->pallete);
+      RGBPalleteDecrement(&state->pallete);
       break;
     case SDLK_UP:
-      RGBPallete_Increment(&state->pallete);
+      RGBPalleteIncrement(&state->pallete);
       break;
     default:
       break;
@@ -71,12 +71,12 @@ void processKeyDownEvent(SDL_KeyboardEvent *event, LoopState* state) {
 }
 
 void processMouseButtonUpEvent(SDL_MouseButtonEvent *event, LoopState* state) {
-  int x, y;
+  uint8_t x, y;
   
   x = (((double) event->x / (double) state->window.width)) * 255;
   y = (((double) event->y / (double) state->window.height)) * 255;
 
-  RGB color = RGBPallete_At(&state->pallete, x, y);
+  RGB color = RGBPalleteAt(&state->pallete, x, y);
   switch (event->button) {
     case SDL_BUTTON_LEFT:
       printf("RGB: [%d, %d, %d]\n", color.r, color.g, color.b);

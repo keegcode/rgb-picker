@@ -9,13 +9,13 @@ typedef struct {
   bool isRunning;
 } LoopState;
 
-LoopState Loop_Setup();
+LoopState LoopSetup();
 
-void Loop_ProcessInput(LoopState *state);
+void LoopProcessInput(LoopState *state);
 
-void Loop_Render(LoopState* state);
+void LoopRender(LoopState *state);
 
-void Loop_Destroy(LoopState* state);
+void LoopDestroy(LoopState *state);
 
 void processWindowEvent(SDL_WindowEvent *event, LoopState *state);
 void processKeyDownEvent(SDL_KeyboardEvent *event, LoopState *state);

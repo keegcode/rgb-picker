@@ -1,14 +1,14 @@
 #include "include/loop.h"
 
 int main() {
-  LoopState state = Loop_Setup();
+  LoopState state = LoopSetup();
 
   while (state.isRunning) {
-    Loop_ProcessInput(&state);
-    Loop_Render(&state);
+    LoopProcessInput(&state);
+    LoopRender(&state);
   }
 
-  Loop_Destroy(&state);
+  LoopDestroy(&state);
 
   return 0;
 }

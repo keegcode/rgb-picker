@@ -10,16 +10,15 @@ typedef struct {
 
 typedef struct {
   uint32_t base; 
-  uint32_t selected;
-  unsigned char step;
+  uint8_t step;
   ColorBuffer buffer;
   SDL_Texture *texture;
 } RGBPallete;
 
-RGBPallete RGBPallete_CreatePallete();
-SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *renderer); 
-RGB RGBPallete_At(RGBPallete *pallete, int x, int y);
-void RGBPallete_Decrement(RGBPallete *pallete);
-void RGBPallete_Increment(RGBPallete *pallete);
-void RGBPallete_Destroy(RGBPallete *pallete);
+RGBPallete RGBPalleteCreate();
+SDL_Texture* RGBPalleteCreateSDLTexture(RGBPallete *pallete, SDL_Renderer *renderer); 
+RGB RGBPalleteAt(RGBPallete *pallete, uint8_t x, uint8_t y);
+void RGBPalleteDecrement(RGBPallete *pallete);
+void RGBPalleteIncrement(RGBPallete *pallete);
+void RGBPalleteDestroy(RGBPallete *pallete);
 

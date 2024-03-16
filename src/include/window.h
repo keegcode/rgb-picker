@@ -4,11 +4,11 @@
 
 typedef struct {
   bool initalized;
-  int width;
-  int height;
-  SDL_Window *window;
+  uint16_t width;
+  uint16_t height;
+  SDL_Window *sdl;
   SDL_Renderer *renderer;
 } Window; 
 
-Window Window_Create();
-void Window_Destroy(Window *window);
+Window WindowCreate();
+void WindowDestroy(Window *window);

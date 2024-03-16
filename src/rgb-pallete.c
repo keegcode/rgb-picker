@@ -1,18 +1,15 @@
 #include "include/rgb-pallete.h"
 
-RGBPallete RGBPallete_CreatePallete() {
-  ColorBuffer buffer;
-  RGBPallete pallete = {0xFFFF0000, 0xFFFF0000, 15};
+RGBPallete RGBPalleteCreate() {
+  ColorBuffer buffer = {.buffer=NULL, .size=(255 * 255)};
+  RGBPallete pallete = {.base=0xFFFF0000, .buffer=buffer, .step=15, .texture=NULL};
   
-  buffer.buffer = (uint32_t*) malloc(255 * 255 * sizeof(uint32_t));
-  buffer.size = 255 * 255;
-
-  pallete.buffer = buffer;
+  pallete.buffer.buffer = (uint32_t*) malloc(255 * 255 * sizeof(uint32_t));
 
   return pallete;
 }
 
-SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *renderer) {
+SDL_Texture* RGBPalleteCreateSDLTexture(RGBPallete *pallete, SDL_Renderer *renderer) {
   SDL_Texture *texture = pallete->texture;
 
   if (texture == NULL) {
@@ -25,8 +22,8 @@ SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *rend
     );
   } 
   
-  int height, width;
-  int ul, ur, bl, br;
+  uint8_t height, width;
+  size_t ul, ur, bl, br;
 
   height = 255;
   width = 255;
@@ -43,21 +40,21 @@ SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *rend
   buffer[bl] = 0xFF000000;
   buffer[br] = 0xFF000000;
   
-  for (int i = 0; i < height; i++) {
+  for (size_t i = 0; i < height; i++) {
     double t = i / (double)(height - 1);
-    int l = i * height + ul; 
-    int r = i * height + ur; 
-    buffer[l] = RGB_uint32_t_Lerp(buffer[ul], buffer[bl], t);
-    buffer[r] = RGB_uint32_t_Lerp(buffer[ur], buffer[br], t);
+    size_t l = i * height + ul; 
+    size_t r = i * height + ur; 
+    buffer[l] = RGBU32Lerp(buffer[ul], buffer[bl], t);
+    buffer[r] = RGBU32Lerp(buffer[ur], buffer[br], t);
   }
   
-  for (int y = 0; y < height; y++) {
-    int l = y * height;
-    int r = (y * height) + width - 1;
-    for (int x = 0; x < width; x++) {
-      int i = y * height + x;
+  for (size_t y = 0; y < height; y++) {
+    size_t l = y * height;
+    size_t r = (y * height) + width - 1;
+    for (size_t x = 0; x < width; x++) {
+      size_t i = y * height + x;
       double t = x / (double)ur;
-      buffer[i] = RGB_uint32_t_Lerp(buffer[l], buffer[r], t);
+      buffer[i] = RGBU32Lerp(buffer[l], buffer[r], t);
     }
   }
 
@@ -66,8 +63,8 @@ SDL_Texture* RGBPallete_CreateSDLTexture(RGBPallete *pallete, SDL_Renderer *rend
   return pallete->texture;
 }
 
-void RGBPallete_Decrement(RGBPallete *pallete) {
-  RGB rgb = RGB_from_uint32_t(pallete->base);
+void RGBPalleteDecrement(RGBPallete *pallete) {
+  RGB rgb = RGBFromU32(pallete->base);
 
   if (rgb.r == 255 && rgb.b == 0) {
     rgb.g += pallete->step;
@@ -93,11 +90,11 @@ void RGBPallete_Decrement(RGBPallete *pallete) {
     rgb.r += pallete->step;
   }
   
-  pallete->base = RGB_to_uint32_t(&rgb);
+  pallete->base = RGBToU32(&rgb);
 }
 
-void RGBPallete_Increment(RGBPallete *pallete) {
-  RGB rgb = RGB_from_uint32_t(pallete->base);
+void RGBPalleteIncrement(RGBPallete *pallete) {
+  RGB rgb = RGBFromU32(pallete->base);
 
   if (rgb.r == 255 && rgb.g == 0) {
     rgb.b += pallete->step;
@@ -123,15 +120,15 @@ void RGBPallete_Increment(RGBPallete *pallete) {
     rgb.g += pallete->step;
   }
   
-  pallete->base = RGB_to_uint32_t(&rgb);
+  pallete->base = RGBToU32(&rgb);
 }
 
-RGB RGBPallete_At(RGBPallete *pallete, int x, int y) {
+RGB RGBPalleteAt(RGBPallete *pallete, uint8_t x, uint8_t y) {
   uint32_t color = pallete->buffer.buffer[y * 255 + x];
-  return RGB_from_uint32_t(color);
+  return RGBFromU32(color);
 }
 
-void RGBPallete_Destroy(RGBPallete *pallete) {
+void RGBPalleteDestroy(RGBPallete *pallete) {
   free(pallete->buffer.buffer);
   SDL_DestroyTexture(pallete->texture);
 }
