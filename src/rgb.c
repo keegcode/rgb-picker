@@ -3,9 +3,9 @@
 RGB RGBFromU32(uint32_t color) {
   RGB colors;
   
-  unsigned char r = (color >> 16) & 0xFF;
-  unsigned char g = (color >> 8) & 0xFF;
-  unsigned char b = color & 0xFF;
+  uint8_t r = (color >> 16) & 0xFF;
+  uint8_t g = (color >> 8) & 0xFF;
+  uint8_t b = color & 0xFF;
   
   colors.r = r; 
   colors.g = g;
@@ -19,9 +19,9 @@ uint32_t RGBToU32(RGB *rgb) {
 }
 
 RGB RGBLerp(RGB *rgb1, RGB *rgb2, double t) {
-  unsigned char r = (unsigned char)(rgb1->r + (rgb2->r - rgb1->r) * t);
-  unsigned char g = (unsigned char)(rgb1->g + (rgb2->g - rgb1->g) * t);
-  unsigned char b = (unsigned char)(rgb1->b + (rgb2->b - rgb1->b) * t);
+  uint8_t r = (uint8_t)(rgb1->r + (rgb2->r - rgb1->r) * t);
+  uint8_t g = (uint8_t)(rgb1->g + (rgb2->g - rgb1->g) * t);
+  uint8_t b = (uint8_t)(rgb1->b + (rgb2->b - rgb1->b) * t);
 
   return (RGB) {.r=r,.g=g,.b=b};
 }
